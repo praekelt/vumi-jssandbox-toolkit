@@ -135,7 +135,7 @@ describe("http.dummy", function() {
 
                 fixture.use();
                 fixture.use();
-                
+
                 assert.equal(fixture.serialize().uses, 2);
             });
 
@@ -555,6 +555,20 @@ describe("http.dummy", function() {
                     });
                 });
 
+                it("should fail if there are any non-array headers", function() {
+                    api.http.fixtures.add({request: {url: /.*a.*/}});
+
+                    return request('http.get', {
+                        url: 'http://a.com',
+                        headers: {
+                            'foo': ['bar'],
+                            'bar': 'baz',
+                        }
+                    }).then(function(result) {
+                        assert(!result.success);
+                    });
+                });
+
                 it("should record the request", function() {
                     api.http.fixtures.add({
                         request: {
@@ -700,7 +714,7 @@ describe("http.dummy", function() {
                 }),
                 dummy.encodings.json);
         });
-        
+
         it("should fallback to a 'none' encoding", function() {
             assert.equal(
                 dummy.infer_encoding({'Content-Type': ['foo']}),
